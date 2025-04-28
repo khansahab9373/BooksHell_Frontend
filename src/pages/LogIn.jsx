@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { authActions } from "../store/auth";
 import { useDispatch } from "react-redux";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const Login = () => {
   const [Values, setValues] = useState({
@@ -21,7 +22,12 @@ const Login = () => {
   const submit = async () => {
     try {
       if (Values.username === "" || Values.password === "") {
-        alert("All fields are required");
+        // SweetAlert for missing fields
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Fields",
+          text: "All fields are required!",
+        });
         return;
       } else {
         const response = await axios.post(
@@ -34,6 +40,14 @@ const Login = () => {
         localStorage.setItem("id", response.data.id);
         localStorage.setItem("role", response.data.role);
         localStorage.setItem("token", response.data.token);
+
+        // SweetAlert for success
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          text: "Welcome back!",
+        });
+
         navigate("/profile");
       }
     } catch (error) {
@@ -43,15 +57,31 @@ const Login = () => {
         console.error("Error response data:", error.response.data);
         console.error("Error response status:", error.response.status);
         console.error("Error response headers:", error.response.headers);
-        alert(
-          `Error: ${error.response.data.message || "Something went wrong"}`
-        );
+
+        // SweetAlert for server error
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: error.response.data.message || "Something went wrong.",
+        });
       } else if (error.request) {
         console.error("Error request:", error.request);
-        alert("No response received from server. Please try again.");
+
+        // SweetAlert for no server response
+        Swal.fire({
+          icon: "error",
+          title: "No Response",
+          text: "No response received from server. Please try again.",
+        });
       } else {
         console.error("Error message:", error.message);
-        alert("An unexpected error occurred. Please try again.");
+
+        // SweetAlert for unexpected error
+        Swal.fire({
+          icon: "error",
+          title: "Unexpected Error",
+          text: "An unexpected error occurred. Please try again.",
+        });
       }
     }
   };

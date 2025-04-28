@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const AddBook = () => {
   const [Data, setData] = useState({
@@ -33,7 +34,12 @@ const AddBook = () => {
         Data.desc === "" ||
         Data.language === ""
       ) {
-        alert("All fields are required");
+        // SweetAlert for missing fields
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Fields",
+          text: "All fields are required!",
+        });
       } else {
         const response = await axios.post(
           "https://bookshell-backend.vercel.app/api/v1/add-book",
@@ -48,10 +54,22 @@ const AddBook = () => {
           desc: "",
           language: "",
         });
-        alert(response.data.message);
+        // SweetAlert for success
+        Swal.fire({
+          icon: "success",
+          title: "Book Added",
+          text: response.data.message,
+        });
       }
     } catch (error) {
-      alert(error.response?.data?.message || "An error occurred");
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error.response?.data?.message ||
+          "An error occurred while adding the book.",
+      });
     }
   };
 

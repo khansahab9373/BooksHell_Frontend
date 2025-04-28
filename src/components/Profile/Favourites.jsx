@@ -25,6 +25,11 @@ const Favourites = () => {
     fetch();
   }, []); // Removed dependency on FavouriteBooks to avoid infinite re-renders
 
+  // Function to remove a book from the list after it's removed from favourites
+  const handleRemoveBook = (bookId) => {
+    setFavouriteBooks(FavouriteBooks.filter((book) => book._id !== bookId));
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white px-4 py-8">
       {FavouriteBooks && FavouriteBooks.length === 0 && (
@@ -36,9 +41,13 @@ const Favourites = () => {
 
       {FavouriteBooks && FavouriteBooks.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {FavouriteBooks.map((item, i) => (
-            <div key={i}>
-              <BookCard data={item} favourite={true} />
+          {FavouriteBooks.map((item) => (
+            <div key={item._id}>
+              <BookCard
+                data={item}
+                favourite={true}
+                onRemove={handleRemoveBook}  // Pass the onRemove function
+              />
             </div>
           ))}
         </div>

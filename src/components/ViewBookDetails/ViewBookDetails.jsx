@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 import { FaHeart, FaShoppingCart, FaEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const ViewBookDetails = () => {
   const navigate = useNavigate();
@@ -31,30 +32,81 @@ const ViewBookDetails = () => {
   };
 
   const handleFavourite = async () => {
-    const response = await axios.put(
-      `https://bookshell-backend.vercel.app/api/v1/add-book-to-favourite`,
-      {},
-      { headers }
-    );
-    alert(response.data.message);
+    try {
+      const response = await axios.put(
+        `https://bookshell-backend.vercel.app/api/v1/add-book-to-favourite`,
+        {},
+        { headers }
+      );
+
+      // SweetAlert for success
+      Swal.fire("Added to Favourites", response.data.message, "success");
+    } catch (error) {
+      console.error("Error adding to favourites:", error);
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to add the book to favourites.",
+      });
+    }
   };
 
   const handleCart = async () => {
-    const response = await axios.put(
-      `https://bookshell-backend.vercel.app/api/v1/add-to-cart`,
-      {},
-      { headers }
-    );
-    alert(response.data.message);
+    try {
+      const response = await axios.put(
+        `https://bookshell-backend.vercel.app/api/v1/add-to-cart`,
+        {},
+        { headers }
+      );
+
+      // SweetAlert for success
+      Swal.fire("Added to Cart", response.data.message, "success");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to add the book to cart.",
+      });
+    }
   };
 
   const deleteBook = async () => {
-    const response = await axios.delete(
-      "https://bookshell-backend.vercel.app/api/v1/delete-book",
-      { headers }
-    );
-    alert(response.data.message);
-    navigate("/all-books");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this book?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(
+            "https://bookshell-backend.vercel.app/api/v1/delete-book",
+            { headers }
+          );
+
+          // SweetAlert for success
+          Swal.fire("Deleted", response.data.message, "success");
+          navigate("/all-books");
+        } catch (error) {
+          console.error("Error deleting book:", error);
+
+          // SweetAlert for error
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete the book.",
+          });
+        }
+      }
+    });
   };
 
   if (!Data) {

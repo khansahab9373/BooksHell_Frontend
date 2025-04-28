@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const SignUp = () => {
   const [Values, setValues] = useState({
@@ -25,27 +26,52 @@ const SignUp = () => {
         Values.password === "" ||
         Values.address === ""
       ) {
-        alert("All fields are required");
+        // SweetAlert for missing fields
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Fields",
+          text: "All fields are required!",
+        });
         return;
       } else {
         const response = await axios.post(
           "https://bookshell-backend.vercel.app/api/v1/sign-up",
           Values
         );
-        console.log("Response data:", response.data.message);
+
+        // SweetAlert for success
+        Swal.fire({
+          icon: "success",
+          title: "Sign Up Successful",
+          text: response.data.message || "Your account has been created!",
+        });
+
         navigate("/LogIn");
       }
     } catch (error) {
-      console.error("Error during Axios request:", error);
+      console.error("Error during sign-up:", error);
 
       if (error.response) {
-        alert(
-          `Error: ${error.response.data.message || "Something went wrong"}`
-        );
+        // SweetAlert for server error
+        Swal.fire({
+          icon: "error",
+          title: "Sign Up Failed",
+          text: error.response.data.message || "Something went wrong.",
+        });
       } else if (error.request) {
-        alert("No response received from server. Please try again.");
+        // SweetAlert for no server response
+        Swal.fire({
+          icon: "error",
+          title: "No Response",
+          text: "No response received from server. Please try again.",
+        });
       } else {
-        alert("An unexpected error occurred. Please try again.");
+        // SweetAlert for unexpected error
+        Swal.fire({
+          icon: "error",
+          title: "Unexpected Error",
+          text: "An unexpected error occurred. Please try again.",
+        });
       }
     }
   };

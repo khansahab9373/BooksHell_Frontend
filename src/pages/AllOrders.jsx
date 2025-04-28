@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import { FaUser, FaCheck } from "react-icons/fa";
 import { IoOpenOutline } from "react-icons/io5";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import SeeUserData from "./SeeUserData";
 
 const AllOrders = () => {
@@ -29,6 +30,13 @@ const AllOrders = () => {
         setAllOrders(orders); // Directly set all orders without modifying the array
       } catch (error) {
         console.error("Error fetching order history:", error);
+
+        // SweetAlert for error
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to fetch orders.",
+        });
       }
     };
 
@@ -48,10 +56,20 @@ const AllOrders = () => {
         Values,
         { headers }
       );
-      alert(response.data.message);
+
+      // SweetAlert for success
+      Swal.fire("Updated", response.data.message, "success");
+
       setOptions(null); // Reset the option select after updating
     } catch (error) {
       console.error("Error updating status:", error);
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to update the order status.",
+      });
     }
   };
 

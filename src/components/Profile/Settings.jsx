@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../Loader/Loader";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const Settings = () => {
   const [profileData, setProfileData] = useState(null);
@@ -24,6 +25,13 @@ const Settings = () => {
         setValue({ address: response.data.address });
       } catch (error) {
         console.error("Error fetching user data:", error);
+
+        // SweetAlert for error
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to fetch user data.",
+        });
       }
     };
     fetchUserData();
@@ -44,10 +52,18 @@ const Settings = () => {
         { headers }
       );
       console.log("Address updated successfully:", response.data);
-      alert("Address updated successfully!");
+
+      // SweetAlert for success
+      Swal.fire("Updated", "Address updated successfully!", "success");
     } catch (error) {
       console.error("Error updating address:", error);
-      alert("Failed to update the address. Please try again.");
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to update the address. Please try again.",
+      });
     } finally {
       setIsSubmitting(false); // Hide loading state
     }

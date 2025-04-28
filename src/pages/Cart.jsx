@@ -3,6 +3,7 @@ import { AiFillDelete } from "react-icons/ai";
 import Loader from "../components/Loader/Loader";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -26,6 +27,13 @@ const Cart = () => {
       setCart(res.data.data || []);
     } catch (error) {
       console.error("Error fetching cart:", error);
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to fetch cart data.",
+      });
     } finally {
       setLoading(false);
     }
@@ -49,33 +57,79 @@ const Cart = () => {
 
   // Delete item from cart
   const deleteItem = async (bookid) => {
-    try {
-      const response = await axios.put(
-        `https://bookshell-backend.vercel.app/api/v1/remove-from-cart/${bookid}`,
-        {},
-        { headers }
-      );
-      console.log(response);
-      fetchCart();
-    } catch (error) {
-      console.error("Error removing book from cart:", error);
-      alert("An error occurred while removing the book.");
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to remove this book from your cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, remove it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(
+            `https://bookshell-backend.vercel.app/api/v1/remove-from-cart/${bookid}`,
+            {},
+            { headers }
+          );
+
+          // SweetAlert for success
+          Swal.fire(
+            "Removed",
+            "The book has been removed from your cart.",
+            "success"
+          );
+
+          fetchCart(); // Refresh cart data
+        } catch (error) {
+          console.error("Error removing book from cart:", error);
+
+          // SweetAlert for error
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while removing the book.",
+          });
+        }
+      }
+    });
   };
 
   const PlaceOrder = async () => {
-    try {
-      const response = await axios.post(
-        "https://bookshell-backend.vercel.app/api/v1/place-order",
-        { order: Cart },
-        { headers }
-      );
-      alert(response.data.message);
-      navigate("/profile/orderHistory");
-    } catch (error) {
-      console.log(error);
-      alert("An error occurred while placing the order.");
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to place the order for all items in your cart?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, place order!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.post(
+            "https://bookshell-backend.vercel.app/api/v1/place-order",
+            { order: Cart },
+            { headers }
+          );
+
+          // SweetAlert for success
+          Swal.fire("Order Placed", response.data.message, "success");
+
+          navigate("/profile/orderHistory");
+        } catch (error) {
+          console.error("Error placing order:", error);
+
+          // SweetAlert for error
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while placing the order.",
+          });
+        }
+      }
+    });
   };
 
   return (

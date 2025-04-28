@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
-const BookCard = ({ data, favourite }) => {
+const BookCard = ({ data, favourite, onRemove }) => {
   const [loading, setLoading] = useState(false);
 
   const headers = {
     id: localStorage.getItem("id"),
+    bookid: data._id, // Add bookid from `data` to headers
     authorization: `Bearer ${localStorage.getItem("token")}`,
   };
 
@@ -15,14 +17,31 @@ const BookCard = ({ data, favourite }) => {
     try {
       const response = await axios.put(
         `https://bookshell-backend.vercel.app/api/v1/remove-book-from-favourite`,
-        {},
+        {}, // Empty body as headers contain data
         { headers }
       );
       console.log("Book removed from favourites:", response.data.message);
-      alert(response.data.message);
+
+      // SweetAlert success message
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: response.data.message,
+      });
+
+      // Notify the parent component to remove the book from the list
+      if (onRemove) {
+        onRemove(data._id); // Trigger parent function to update the list
+      }
     } catch (error) {
       console.error("Error removing book from favourites:", error);
-      alert("An error occurred while removing the book.");
+
+      // SweetAlert error message
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while removing the book.",
+      });
     } finally {
       setLoading(false);
     }
@@ -57,7 +76,7 @@ const BookCard = ({ data, favourite }) => {
             loading ? "cursor-not-allowed opacity-50" : ""
           }`}
           onClick={handleRemoveBook}
-          disabled={loading}
+          disabled={loading} // Disable button while loading
         >
           {loading ? "Removing..." : "Remove From Favourite"}
         </button>

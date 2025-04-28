@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const UpdateBook = () => {
   const [Data, setData] = useState({
@@ -38,7 +39,13 @@ const UpdateBook = () => {
         Data.desc === "" ||
         Data.language === ""
       ) {
-        alert("All fields are required");
+        // SweetAlert for missing fields
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Fields",
+          text: "All fields are required!",
+        });
+        return;
       } else {
         const response = await axios.put(
           `https://bookshell-backend.vercel.app/api/v1/update-book`,
@@ -53,20 +60,47 @@ const UpdateBook = () => {
           desc: "",
           language: "",
         });
-        alert(response.data.message);
+
+        // SweetAlert for success
+        Swal.fire({
+          icon: "success",
+          title: "Book Updated",
+          text: response.data.message,
+        });
+
         navigate(`/view-book-details/${id}`);
       }
     } catch (error) {
-      alert(error.response?.data?.message || "An error occurred");
+      console.error("Error updating book:", error);
+
+      // SweetAlert for error
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error.response?.data?.message ||
+          "An error occurred while updating the book.",
+      });
     }
   };
 
   useEffect(() => {
     const fetch = async () => {
-      const response = await axios.get(
-        `https://bookshell-backend.vercel.app/api/v1/get-book-by-id/${id}`
-      );
-      setData(response.data.data);
+      try {
+        const response = await axios.get(
+          `https://bookshell-backend.vercel.app/api/v1/get-book-by-id/${id}`
+        );
+        setData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching book details:", error);
+
+        // SweetAlert for error
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to fetch book details.",
+        });
+      }
     };
     fetch();
   }, [id]);
