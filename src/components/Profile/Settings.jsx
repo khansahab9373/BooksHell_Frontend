@@ -17,7 +17,7 @@ const Settings = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/get-user-information",
+          "https://bookshell-backend.vercel.app/api/v1/get-user-information",
           { headers }
         );
         setProfileData(response.data);
@@ -39,7 +39,7 @@ const Settings = () => {
     setIsSubmitting(true); // Show loading state
     try {
       const response = await axios.put(
-        "http://localhost:3000/api/v1/update-address",
+        "https://bookshell-backend.vercel.app/api/v1/update-address",
         value,
         { headers }
       );

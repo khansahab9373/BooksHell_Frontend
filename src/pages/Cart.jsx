@@ -20,7 +20,7 @@ const Cart = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/v1/get-user-cart`,
+        `https://bookshell-backend.vercel.app/api/v1/get-user-cart`,
         { headers }
       );
       setCart(res.data.data || []);
@@ -51,7 +51,7 @@ const Cart = () => {
   const deleteItem = async (bookid) => {
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/v1/remove-from-cart/${bookid}`,
+        `https://bookshell-backend.vercel.app/api/v1/remove-from-cart/${bookid}`,
         {},
         { headers }
       );
@@ -66,7 +66,7 @@ const Cart = () => {
   const PlaceOrder = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/place-order",
+        "https://bookshell-backend.vercel.app/api/v1/place-order",
         { order: Cart },
         { headers }
       );

@@ -14,7 +14,7 @@ const UserOrderHistory = () => {
     const fetch = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/get-order-history",
+          "https://bookshell-backend.vercel.app/api/v1/get-order-history",
           { headers }
         );
         setOrderHistory(response.data.data);

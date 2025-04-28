@@ -41,7 +41,7 @@ const UpdateBook = () => {
         alert("All fields are required");
       } else {
         const response = await axios.put(
-          `http://localhost:3000/api/v1/update-book`,
+          `https://bookshell-backend.vercel.app/api/v1/update-book`,
           Data,
           { headers }
         );
@@ -64,7 +64,7 @@ const UpdateBook = () => {
   useEffect(() => {
     const fetch = async () => {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/get-book-by-id/${id}`
+        `https://bookshell-backend.vercel.app/api/v1/get-book-by-id/${id}`
       );
       setData(response.data.data);
     };

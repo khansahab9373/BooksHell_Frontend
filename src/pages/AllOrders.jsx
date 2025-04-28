@@ -22,7 +22,7 @@ const AllOrders = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/get-all-orders",
+          "https://bookshell-backend.vercel.app/api/v1/get-all-orders",
           { headers }
         );
         const orders = response.data.data || [];
@@ -44,7 +44,7 @@ const AllOrders = () => {
     const id = AllOrders[index]._id;
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/v1/update-status/${id}`,
+        `https://bookshell-backend.vercel.app/api/v1/update-status/${id}`,
         Values,
         { headers }
       );

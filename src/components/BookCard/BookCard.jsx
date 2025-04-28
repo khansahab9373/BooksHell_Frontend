@@ -14,7 +14,7 @@ const BookCard = ({ data, favourite }) => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/v1/remove-book-from-favourite`,
+        `https://bookshell-backend.vercel.app/api/v1/remove-book-from-favourite`,
         {},
         { headers }
       );
